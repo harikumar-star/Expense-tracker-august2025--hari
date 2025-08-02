@@ -1,0 +1,16 @@
+Feature	Description
+✅ Add Expense	Add date, amount, category, and note
+✅ List Expenses	Show all expenses for the user
+
+✅ Edit/Delete Expense	Modify or delete existing records
+✅ Categorize Expenses	Food, Travel, Bills, etc.
+✅ Filter by Date/Type	View expenses by date range or category
+✅ Summary Dashboard	Total spent, most frequent categories, charts
+
+CREATE TABLE expenses (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    date DATE,
+    amount DECIMAL(10, 2),
+    category VARCHAR(100),
+    note TEXT
+);

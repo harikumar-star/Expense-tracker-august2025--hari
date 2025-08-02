@@ -1,0 +1,70 @@
+https://github.com/harikumar-star/Expense-tracker-august2025--hari.git
+
+public interface ExpenseRepository extends JpaRepository<Expense, Long> {
+
+    List<Expense> findByUsername(String username);
+
+    List<Expense> findByUsernameAndCategory(String username, String category);
+
+    List<Expense> findByUsernameAndDateBetween(String username, LocalDate start, LocalDate end);
+
+    @Query("SELECT e.category, SUM(e.amount) FROM Expense e WHERE e.username = :username GROUP BY e.category")
+    List<Object[]> getCategoryWiseSummary(@Param("username") String username);
+}
+
+=============================
+
+
+@Controller
+public class ExpenseController {
+
+    @Autowired
+    private ExpenseRepository expenseRepo;
+
+    @GetMapping("/expenses")
+    public String viewExpenses(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        List<Expense> expenses = expenseRepo.findByUsername(username);
+        model.addAttribute("expenses", expenses);
+        return "view-expenses";
+    }
+
+    @GetMapping("/filterByCategory")
+    public String filterByCategory(@RequestParam String category, Model model, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        List<Expense> filtered = expenseRepo.findByUsernameAndCategory(username, category);
+        model.addAttribute("expenses", filtered);
+        return "view-expenses";
+    }
+
+    @GetMapping("/filterByDate")
+    public String filterByDate(@RequestParam String start, @RequestParam String end, Model model, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+        List<Expense> filtered = expenseRepo.findByUsernameAndDateBetween(username, startDate, endDate);
+        model.addAttribute("expenses", filtered);
+        return "view-expenses";
+    }
+
+    @GetMapping("/summary")
+    public String summary(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        List<Object[]> summary = expenseRepo.getCategoryWiseSummary(username);
+        model.addAttribute("summary", summary);
+        return "summary";
+    }
+
+    @PostMapping("/saveExpense")
+    public String saveExpense(Expense expense, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        expense.setUsername(username);
+        expenseRepo.save(expense);
+        return "redirect:/expenses";
+    }
+
+    @GetMapping("/addExpense")
+    public String showAddForm() {
+        return "add-expense";
+    }
+}
