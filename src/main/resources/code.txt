@@ -1,4 +1,16 @@
-https://github.com/harikumar-star/Expense-tracker-august2025--hari.git
+ git remote add origin https://github.com/harikumar-star/Expense-tracker-august2025--hari.git
+
+
+git init
+
+git remote add origin https://github.com/your-username/your-repo.git
+If you've already added origin and get an error, use:
+
+git remote set-url origin https://github.com/your-username/your-repo.git
+
+git add .
+git commit -m "Initial commit"
+git push -u origin master
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
